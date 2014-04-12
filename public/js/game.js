@@ -1,14 +1,16 @@
 $(document).ready(function() {
     var keys = new Keys(document);
     var game = new Game();
-    var world = new Game.World();
 
     var socket = io.connect('http://localhost');
-    socket.on('news', function (data) {
-     player.position.x = data.x;
-     player.position.y = data.y;
-     player.position.z = data.z;
-
+    socket.on('init world', function (data) {
+     game.world.update(data);
+    });
+    socket.on('update world', function (data) {
+     game.world.update(world);
+     player.position.x = world.players[0].x;
+     player.position.y = world.players[0].y;
+     player.position.z = world.players[0].z;
     });
 
     var scene = new THREE.Scene();
