@@ -144,7 +144,7 @@ var Game = require('./public/js/class/Game.js');
 io.sockets.on('connection', function (socket) {
     var game = new Game();
 
-    socket.emit('init world', game.world);
+    socket.emit('init game', game);
 
     socket.on('keys refresh', function (data) {
         game.player.moveByKeys(data);
