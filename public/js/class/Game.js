@@ -43,6 +43,6 @@ Game.Player.prototype.moveByKeys = function(keys) {
     }
 }
 
-if (this.module) {
+if (!this.document) {
     module.exports = Game;
 }
