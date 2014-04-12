@@ -1,7 +1,8 @@
 include includes/head.jade
     // Custom styles for this template
     link(href="/css/login.css",rel="stylesheet")
-    title Bomberman3D
+    title Room #{room} - Bomberman3D
 body
     #container
         script(src="/socket.io/socket.io.js")
+        script(src="/js/game.js")
