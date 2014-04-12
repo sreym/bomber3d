@@ -23,7 +23,7 @@ app.use(express.session({
         user: 'root',
         password: '',
         database: 'bomber'
-    }}
+    }})
 }));
 app.use(flash());
 app.use(orm.express("mysql://root:@localhost/bomber", {
