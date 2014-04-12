@@ -21,14 +21,28 @@ app.use(express.session({
     secret: 'sdlfjzzxcahsdflahsdkryahzkhd',
     store: new connect_mysql({ config: {
         user: 'root',
-        password: '',
+        password: 'root',
         database: 'bomber'
-    }}
+    }})
 }));
 app.use(flash());
-app.use(orm.express("mysql://root:@localhost/bomber", {
+app.use(orm.express("mysql://root:root@localhost/bomber", {
     define: function (db, models, next) {
         db.settings.set('instance.cache', false);
+
+        models.User = db.define('user', {
+            username: String,
+            password: String
+        }, {
+            methods: {
+                validPassword: function(password) {
+                    return this.password == password;
+                }
+            }
+        });
+
+        models.User.sync();
+
 
         passport.use(new LocalStrategy(
             function(username, password, done) {
