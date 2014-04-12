@@ -147,7 +147,7 @@ io.sockets.on('connection', function (socket) {
     socket.emit('init game', game);
 
     socket.on('keys refresh', function (data) {
-        game.player.moveByKeys(data);
+        game.player.moveByKeys(data, game);
         socket.emit('update world', game.world);
     });
 });

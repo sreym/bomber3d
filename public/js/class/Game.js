@@ -14,6 +14,8 @@ Game.prototype.update = function(data) {
 Game.StaticWorld = function(width, height) {
     this.width = width;
     this.height = height;
+    this.blockWidth = 1.0;
+    this.blockHeight = 0.8;
     this.walls = [];
     for(var i = 0; i < height; i++) {
         var A = [];
@@ -52,6 +54,8 @@ Game.Player = function() {
     this.x = 0.0;
     this.y = 0.0;
     this.z = 0.0;
+    this.width = 0.5;
+    this.height = 1.0;
 }
 
 Game.Player.prototype.update = function(data) {
@@ -60,7 +64,13 @@ Game.Player.prototype.update = function(data) {
     this.z = data.z;
 }
 
-Game.Player.prototype.moveByKeys = function(keys) {
+Game.Player.prototype.moveByKeys = function(keys, game) {
+    var oldx = this.x;
+    var oldz = this.z;
+
+    var i1 = Math.floor(this.z);
+    var j1 = Math.floor(this.x);
+
     if (keys.left) {
         this.x -= 0.1;
     }
@@ -72,6 +82,13 @@ Game.Player.prototype.moveByKeys = function(keys) {
     }
     if (keys.down) {
         this.z += 0.1;
+    }
+
+    var i2 = Math.floor(this.z);
+    var j2 = Math.floor(this.x);
+
+    if ( game.staticWorld.walls[i2][j2] == 1) {
+
     }
 }
 
