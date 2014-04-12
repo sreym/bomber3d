@@ -2,7 +2,11 @@ include includes/head.jade
     // Custom styles for this template
     link(href="/css/login.css",rel="stylesheet")
     title Room #{room} - Bomberman3D
+    style
+        canvas { width: 100%; height: 100% }
+
 body
     #container
         script(src="/socket.io/socket.io.js")
+        script(src="/js/three.min.js")
         script(src="/js/game.js")
