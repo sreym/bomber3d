@@ -7,14 +7,16 @@ $(document).ready(function() {
     socket.on('init game', function (data) {
      game.update(data);
      var i, j, c = 0;
-     var wall_geometry = new THREE.CubeGeometry(1,1,1);
-     var wall_material = materials[2];
+     var wall_geometry = new THREE.CubeGeometry(game.staticWorld.blockWidth, game.staticWorld.blockHeight, game.staticWorld.blockWidth);
+     var wall_material = materials[5];
      for (i = 0; i < game.height; i++)
       for (j = 0; j < game.width; j++) {
        if (game.staticWorld.walls[i][j] == 1) {
         staticwalls.push( new THREE.Mesh(wall_geometry, wall_material));
-        staticwalls[c].position.x = j;
-        staticwalls[c].position.z = -i;
+        staticwalls[c].position.x = j * game.staticWorld.blockWidth;
+        staticwalls[c].position.z = -i * game.staticWorld.blockWidth;
+        staticwalls[c].position.y = game.staticWorld.blockHeight / 2 - 0.5;
+        scene.add(staticwalls[c]);
         c++;
        }
 
@@ -22,9 +24,18 @@ $(document).ready(function() {
     });
     socket.on('update world', function (data) {
      game.world.update(data);
-     player.position.x = game.world.players[0].x;
+     player.position.x = game.world.players[0].x - game.staticWorld.dx;
      player.position.y = game.world.players[0].y;
-     player.position.z = game.world.players[0].z;
+     player.position.z = game.world.players[0].z + game.staticWorld.dz;
+     //camera.position.x = player.position.x;
+     //camera.position.y = player.position.y;
+     //camera.position.z = player.position.z;
+     //camera.rotation.x = 0;
+
+     camera.position.x = player.position.x + 1;
+     camera.position.y = player.position.y + 2;
+     camera.position.z = player.position.z + 4;
+
     });
 
     var scene = new THREE.Scene();
@@ -49,10 +60,10 @@ $(document).ready(function() {
     var floor_material = materials[2];
     var floor_geometry = new THREE.Geometry();
 
-    floor_geometry.vertices.push( new THREE.Vector3(  -5,  0, -5 ) );
-    floor_geometry.vertices.push( new THREE.Vector3(  -5, 0, 5 ) );
-    floor_geometry.vertices.push( new THREE.Vector3(  5, 0, 5 ) );
-    floor_geometry.vertices.push( new THREE.Vector3(  5, 0, -5 ) );
+    floor_geometry.vertices.push( new THREE.Vector3(  0,  -0.5, -14 ) );
+    floor_geometry.vertices.push( new THREE.Vector3(  0, -0.5, 0 ) );
+    floor_geometry.vertices.push( new THREE.Vector3(  14, -0.5, 0 ) );
+    floor_geometry.vertices.push( new THREE.Vector3(  14, -0.5, -14 ) );
 
     floor_geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
     floor_geometry.faces.push( new THREE.Face3( 0, 2, 3 ) );
@@ -69,8 +80,8 @@ $(document).ready(function() {
     document.body.appendChild(renderer.domElement);
 
 
-    camera.position.z = 10;
-    camera.position.y = 5;
+    camera.position.z = 6;
+    camera.position.y = 3;
     camera.position.x = 1;
     camera.rotation.x -= 0.3;
 
