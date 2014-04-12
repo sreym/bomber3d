@@ -1,16 +1,30 @@
 $(document).ready(function() {
     var keys = new Keys(document);
     var game = new Game();
+    var staticwalls = [];
 
     var socket = io.connect('http://localhost');
-    socket.on('init world', function (data) {
-     game.world.update(data);
+    socket.on('init game', function (data) {
+     game.update(data);
+     var i, j, c = 0;
+     var wall_geometry = new THREE.CubeGeometry(1,1,1);
+     var wall_material = materials[2];
+     for (i = 0; i < game.height; i++)
+      for (j = 0; j < game.width; j++) {
+       if (game.staticWorld.walls[i][j] == 1) {
+        staticwalls.push( new THREE.Mesh(wall_geometry, wall_material));
+        staticwalls[c].position.x = j;
+        staticwalls[c].position.z = -i;
+        c++;
+       }
+
+      }
     });
     socket.on('update world', function (data) {
      game.world.update(data);
-     player.position.x = world.players[0].x;
-     player.position.y = world.players[0].y;
-     player.position.z = world.players[0].z;
+     player.position.x = game.world.players[0].x;
+     player.position.y = game.world.players[0].y;
+     player.position.z = game.world.players[0].z;
     });
 
     var scene = new THREE.Scene();
