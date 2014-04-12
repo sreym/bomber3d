@@ -95,7 +95,8 @@ app.post('/login', passport.authenticate('local', {
 
 app.get('/', function(req, res) {
     if (req.user) {
-        res.render('index');
+        //res.render('index');
+        res.redirect('/game/1');
     } else {
         res.render('login');
     }
@@ -132,7 +133,11 @@ app.post('/register', function(req,res) {
         req.flash('error', 'Passwords are not equal.');
         res.redirect('/register');
     }
-})
+});
+
+app.get('/game/:id', function(req,res) {
+    res.render('game', {room: req.params.id})
+});
 
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { hello: 'world' });
