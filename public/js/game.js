@@ -1,6 +1,8 @@
 $(document).ready(function() {
     var keys = new Keys(document);
     var socket = io.connect('http://localhost');
+    var game = new Game();
+    var world = new Game.World();
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
