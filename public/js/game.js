@@ -1,5 +1,8 @@
 $(document).ready(function() {
     var keys = new Keys(document);
+    var game = new Game();
+    var world = new Game.World();
+
     var socket = io.connect('http://localhost');
     socket.on('news', function (data) {
      player.position.x = data.x;

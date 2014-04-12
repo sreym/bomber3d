@@ -1,0 +1,3 @@
+Game.World = function() {
+
+}
