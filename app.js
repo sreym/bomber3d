@@ -139,10 +139,16 @@ app.get('/game/:id', function(req,res) {
     res.render('game', {room: req.params.id})
 });
 
+var Game = require('./public/js/class/Game.js');
+
 io.sockets.on('connection', function (socket) {
-    //socket.emit('news', { hello: 'world' });
+    var game = new Game();
+
+    socket.emit('init world', game.world);
+
     socket.on('keys refresh', function (data) {
-        console.log(data);
+        game.player.moveByKeys(data);
+        socket.emit('update world', game.world);
     });
 });
 

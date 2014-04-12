@@ -11,7 +11,9 @@ Game.World = function() {
 }
 
 Game.World.prototype.update = function(data) {
-
+    for(var i = 0; i < this.players.length; i++) {
+        this.players[i].update(data.players[i]);
+    }
 }
 
 Game.Player = function() {
@@ -26,7 +28,7 @@ Game.Player.prototype.update = function(data) {
     this.z = data.z;
 }
 
-Game.Player.prototype.move = function(keys) {
+Game.Player.prototype.moveByKeys = function(keys) {
     if (keys.left) {
         this.x -= 0.1;
     }
