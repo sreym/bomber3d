@@ -1,6 +1,12 @@
 $(document).ready(function() {
     var keys = new Keys(document);
     var socket = io.connect('http://localhost');
+    socket.on('news', function (data) {
+     player.position.x = data.x;
+     player.position.y = data.y;
+     player.position.z = data.z;
+
+    });
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
