@@ -7,7 +7,7 @@ $(document).ready(function() {
      game.world.update(data);
     });
     socket.on('update world', function (data) {
-     game.world.update(world);
+     game.world.update(data);
      player.position.x = world.players[0].x;
      player.position.y = world.players[0].y;
      player.position.z = world.players[0].z;
