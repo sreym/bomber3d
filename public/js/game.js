@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var keys = new Keys(document);
+    var socket = io.connect('http://localhost');
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -48,6 +49,9 @@ $(document).ready(function() {
     camera.position.x = 1;
     camera.rotation.x -= 0.3;
 
+    setInterval( function() {
+      socket.emit('keys refresh', keys);
+    }, 100);
     var render = function () {
         requestAnimationFrame(render);
 
