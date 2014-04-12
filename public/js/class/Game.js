@@ -30,7 +30,7 @@ Game.StaticWorld = function(width, height) {
 
 Game.StaticWorld.prototype.update = function(data) {
     for(var i = 0; i < this.walls.length; i++) {
-        for(var j = 0; j < this.walls[i].length; i++) {
+        for(var j = 0; j < this.walls[i].length; j++) {
             this.walls[i][j] = data.walls[i][j];
         }
     }
