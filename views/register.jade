@@ -1,0 +1,21 @@
+include includes/head.jade
+    // Custom styles for this template
+    link(href="/css/login.css",rel="stylesheet")
+    title Signin Template for Bootstrap
+body
+    #container
+        form(class="form-signin", role="form", method='post', action='/register')
+            h2(class="form-signin-heading") Укажите ваши персональные данные
+            input(name='username', type="text",class="form-control",placeholder="Username",required,autofocus)
+            input(name='password', type="password",class="form-control",placeholder="Password",required)
+            input(name='passwordagain', type="password",class="form-control",placeholder="Password again",required)
+            //label(class="checkbox")
+                input(type="checkbox",value="remember-me")
+                |Remember me
+            button(class="btn btn-lg btn-primary btn-block",type="submit") Зарегистрироваться
+            a(class="btn btn-default btn-xs",href="/login",id='register') Войти
+
+            if error
+                ul(class="bg-danger")
+                    each msg in error
+                        li= msg
