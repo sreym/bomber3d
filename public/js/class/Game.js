@@ -92,6 +92,6 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
     }
 }
 
-if (!this.document) {
+if (typeof module != "undefined") {
     module.exports = Game;
 }
