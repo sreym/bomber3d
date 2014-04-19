@@ -5,17 +5,18 @@ Game = function() {
     this.player = new Game.Player();
     this.world.players.push(this.player);
     this.staticWorld = new Game.StaticWorld(this.width, this.height);
-}
+};
 
 Game.prototype.update = function(data) {
     this.staticWorld.update(data.staticWorld);
-}
+};
 
 Game.StaticWorld = function(width, height) {
     this.width = width;
     this.height = height;
     this.blockWidth = 1.0;
     this.blockHeight = 0.8;
+    this.step = 0.1;
     this.walls = [];
     for(var i = 0; i < height; i++) {
         var A = [];
@@ -28,7 +29,7 @@ Game.StaticWorld = function(width, height) {
         }
         this.walls.push(A);
     }
-}
+};
 
 Game.StaticWorld.prototype.update = function(data) {
     for(var i = 0; i < this.walls.length; i++) {
@@ -36,76 +37,83 @@ Game.StaticWorld.prototype.update = function(data) {
             this.walls[i][j] = data.walls[i][j];
         }
     }
-}
+};
 
 Game.World = function() {
     this.players = [];
     this.walls = [];
     this.bombs = [];
-}
+};
 
 Game.World.prototype.update = function(data) {
     for(var i = 0; i < this.players.length; i++) {
         this.players[i].update(data.players[i]);
     }
-}
+};
 
 Game.Player = function() {
     this.x = 1.0;
-    this.y = 0.0;
-    this.z = 1.0;
-    this.width = 0.5;
+    this.y = 1.0;
+    this.z = 0.0;
+    this.width = 0.8;
     this.height = 1.0;
-}
+};
 
 Game.Player.prototype.update = function(data) {
     this.x = data.x;
     this.y = data.y;
     this.z = data.z;
-}
+};
 
 Game.Player.prototype.moveByKeys = function(keys, game) {
     var oldx = this.x;
-    var oldz = this.z;
+    var oldy = this.y;
 
-    var i1 = Math.floor(this.z / game.staticWorld.blockWidth);
-    var j1 = Math.floor(this.x / game.staticWorld.blockWidth);
-
+    var i1 = Math.floor((this.y + game.staticWorld.blockWidth / 2)/ game.staticWorld.blockWidth);
+    var j1 = Math.floor((this.x + game.staticWorld.blockWidth / 2) / game.staticWorld.blockWidth);
+    console.log(i1 + " " + j1);
     if (keys.left) {
-        this.x -= 0.1;
+        this.x -= game.staticWorld.step;
     }
     if (keys.right) {
-        this.x += 0.1;
+        this.x += game.staticWorld.step;
     }
     if (keys.up) {
-        this.z -= 0.1;
+        this.y += game.staticWorld.step;
     }
     if (keys.down) {
-        this.z += 0.1;
+        this.y -= game.staticWorld.step;
     }
 
-/*
-    var i2 = Math.floor(this.z / game.staticWorld.blockWidth);
-    var j2 = Math.floor(this.x / game.staticWorld.blockWidth);
 
-    if (Math.floor( (this.z + this.width) / game.staticWorld.blockWidth) < i2 && game.staticWorld.walls[i2 - 1][j2] == 1) {
-     this.z = oldz;
+//    var i2 = Math.floor(this.y / game.staticWorld.blockWidth);
+//    var j2 = Math.floor(this.x / game.staticWorld.blockWidth);
+    console.log(this.y + this.width / 2);
+    console.log((i1 + 0.5) * game.staticWorld.blockWidth);
+    if (i1 < game.staticWorld.height - 1 && game.staticWorld.walls[i1 + 1][j1] == 1 && this.y + this.width / 2>= (i1 + 0.5) * game.staticWorld.blockWidth) {
+        this.y = oldy;
     }
+//    if (i1 > 0 && game.staticWorld.walls[i1 - 1][j1] == 1 && this.y - this.width <= (i1 + 0.5) * game.staticWorld.blockWidth) {
+//        this.y = oldy;
+//    }
+//    if (Math.floor( (this.z + this.width) / game.staticWorld.blockWidth) < i2 && game.staticWorld.walls[i2 - 1][j2] == 1) {
+//     this.z = oldz;
+//    }
+//
+//    if (Math.floor( (this.z - this.width) / game.staticWorld.blockWidth) > i2 && game.staticWorld.walls[i2 + 1][j2] == 1) {
+//     this.z = oldz;
+//    }
+//
+//    if (Math.floor( (this.x + this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 + 1] == 1) {
+//     this.x = oldx;
+//    }
+//
+//    if (Math.floor( (this.x - this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 - 1] == 1) {
+//     this.x = oldx;
+//    }
 
-    if (Math.floor( (this.z - this.width) / game.staticWorld.blockWidth) > i2 && game.staticWorld.walls[i2 + 1][j2] == 1) {
-     this.z = oldz;
-    }
 
-    if (Math.floor( (this.x + this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 + 1] == 1) {
-     this.x = oldx;
-    }
-
-    if (Math.floor( (this.x - this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 - 1] == 1) {
-     this.x = oldx;
-    }
-*/
-
-}
+};
 
 if (typeof module != "undefined") {
     module.exports = Game;
