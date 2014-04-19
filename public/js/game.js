@@ -16,15 +16,15 @@ $(document).ready(function() {
     socket.on('init game', function (data) {
         game.update(data);
         var i, j, c = 0;
-        var wall_geometry = new THREE.CubeGeometry(game.staticWorld.blockWidth, game.staticWorld.blockHeight, game.staticWorld.blockWidth);
+        var wall_geometry = new THREE.CubeGeometry(game.blockWidth, game.blockHeight, game.blockWidth);
         var wall_material = materials[5];
         for (i = 0; i < game.height; i++) {
             for (j = 0; j < game.width; j++) {
-                if (game.staticWorld.walls[i][j] == 1) {
+                if (game.world.walls[i][j] == 1) {
                     staticWalls.push(new THREE.Mesh(wall_geometry, wall_material));
-                    staticWalls[c].position.x = j * game.staticWorld.blockWidth;
-                    staticWalls[c].position.z = -i * game.staticWorld.blockWidth;
-                    staticWalls[c].position.y = game.staticWorld.blockHeight / 2 - 0.5;
+                    staticWalls[c].position.x = j * game.blockWidth;
+                    staticWalls[c].position.z = -i * game.blockWidth;
+                    staticWalls[c].position.y = game.blockHeight / 2 - 0.5;
                     scene.add(staticWalls[c]);
                     c++;
                 }
@@ -36,23 +36,23 @@ $(document).ready(function() {
         {
             floorGeometry.vertices.push(new THREE.Vector3(
                 0,
-                -game.staticWorld.blockWidth,
-                    -game.height * game.staticWorld.blockWidth
+                -game.blockWidth,
+                    -game.height * game.blockWidth
             ));
             floorGeometry.vertices.push(new THREE.Vector3(
                 0,
-                    -game.staticWorld.blockWidth / 2,
+                    -game.blockWidth / 2,
                 0
             ));
             floorGeometry.vertices.push(new THREE.Vector3(
-                    game.width * game.staticWorld.blockWidth,
-                    -game.staticWorld.blockWidth / 2,
+                    game.width * game.blockWidth,
+                    -game.blockWidth / 2,
                 0
             ));
             floorGeometry.vertices.push(new THREE.Vector3(
-                    game.width * game.staticWorld.blockWidth,
-                    -game.staticWorld.blockWidth / 2,
-                    -game.height * game.staticWorld.blockWidth
+                    game.width * game.blockWidth,
+                    -game.blockWidth / 2,
+                    -game.height * game.blockWidth
             ));
             floorGeometry.faces.push(new THREE.Face3(0, 1, 2));
             floorGeometry.faces.push(new THREE.Face3(0, 2, 3));
@@ -61,16 +61,16 @@ $(document).ready(function() {
             floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
         }//init floor plane
         player = new THREE.Mesh(playerGeometry, playerMaterial);
-        player.position.x = game.world.players[0].x * game.staticWorld.blockWidth;
+        player.position.x = game.world.players[0].x * game.blockWidth;
         player.position.y = 0;
-        player.position.z = -game.world.players[0].y * game.staticWorld.blockWidth;
+        player.position.z = -game.world.players[0].y * game.blockWidth;
         scene.add(player);
         scene.add(floorPlane);
     });
     socket.on('update world', function (data) {
         game.world.update(data);
-        player.position.x = game.world.players[0].x * game.staticWorld.blockWidth;
-        player.position.z = -game.world.players[0].y * game.staticWorld.blockWidth;
+        player.position.x = game.world.players[0].x * game.blockWidth;
+        player.position.z = -game.world.players[0].y * game.blockWidth;
 //        camera.position.x = player.position.x;
 //        camera.position.y = player.position.y;
 //        camera.position.z = player.position.z;

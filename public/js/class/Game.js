@@ -1,22 +1,20 @@
 Game = function() {
     this.width = 15;
     this.height = 13;
-    this.world = new Game.World(this.width, this.height);
-    this.player = new Game.Player();
-    this.world.players.push(this.player);
-    this.staticWorld = new Game.StaticWorld(this.width, this.height);
-};
-
-Game.prototype.update = function(data) {
-    this.staticWorld.update(data.staticWorld);
-};
-
-Game.StaticWorld = function(width, height) {
-    this.width = width;
-    this.height = height;
     this.blockWidth = 1.0;
     this.blockHeight = 0.8;
     this.step = 0.1;
+    this.world = new Game.World(this.width, this.height);
+    this.player = new Game.Player();
+    this.world.players.push(this.player);
+};
+
+Game.prototype.update = function(data) {
+    this.world.update(data.world);
+};
+
+Game.World = function(width, height) {
+    this.players = [];
     this.walls = [];
     for(var i = 0; i < height; i++) {
         var A = [];
@@ -29,23 +27,16 @@ Game.StaticWorld = function(width, height) {
         }
         this.walls.push(A);
     }
+    this.bombs = [];
 };
 
-Game.StaticWorld.prototype.update = function(data) {
+Game.World.prototype.update = function(data) {
     for(var i = 0; i < this.walls.length; i++) {
         for(var j = 0; j < this.walls[i].length; j++) {
             this.walls[i][j] = data.walls[i][j];
         }
     }
-};
-
-Game.World = function() {
-    this.players = [];
-    this.walls = [];
-    this.bombs = [];
-};
-
-Game.World.prototype.update = function(data) {
+    
     for(var i = 0; i < this.players.length; i++) {
         this.players[i].update(data.players[i]);
     }
@@ -66,114 +57,98 @@ Game.Player.prototype.update = function(data) {
 };
 
 Game.Player.prototype.moveByKeys = function(keys, game) {
-    var oldx = this.x;
-    var oldy = this.y;
+    var tempX, tempY;
+    var oldX = this.x;
+    var oldY = this.y;
 
-    var i1 = Math.floor((this.y + game.staticWorld.blockWidth / 2)/ game.staticWorld.blockWidth);
-    var j1 = Math.floor((this.x + game.staticWorld.blockWidth / 2) / game.staticWorld.blockWidth);
+    var i1 = Math.floor((this.y + game.blockWidth / 2)/ game.blockWidth);
+    var j1 = Math.floor((this.x + game.blockWidth / 2) / game.blockWidth);
     console.log(i1 + " " + j1);
     if (keys.left) {
-        this.x -= game.staticWorld.step;
+        this.x -= game.step;
     }
     if (keys.right) {
-        this.x += game.staticWorld.step;
+        this.x += game.step;
     }
     if (keys.up) {
-        this.y += game.staticWorld.step;
+        this.y += game.step;
     }
     if (keys.down) {
-        this.y -= game.staticWorld.step;
+        this.y -= game.step;
     }
 
 //    var i2 = Math.floor(this.y / game.staticWorld.blockWidth);
 //    var j2 = Math.floor(this.x / game.staticWorld.blockWidth);
 //    console.log((this.y + this.width / 2) + "<=" + ((i1 + 0.5) * game.staticWorld.blockWidth));
 //    console.log((this.y - this.width / 2) + ">=" + ((i1 - 0.5) * game.staticWorld.blockWidth));
-    if (this.y > oldy && i1 < game.staticWorld.height - 1 && game.staticWorld.walls[i1 + 1][j1] == 1 && this.y + this.width / 2 >= (i1 + 0.5) * game.staticWorld.blockWidth) {
-        this.y = oldy;
+    if (this.y > oldY && i1 < game.height - 1 && game.world.walls[i1 + 1][j1] > 0 && this.y + this.width / 2 >= (i1 + 0.5) * game.blockWidth) {
+        this.y = oldY;
     }
-    if (this.y < oldy && i1 > 0 && game.staticWorld.walls[i1 - 1][j1] == 1 && this.y - this.width / 2  <= (i1 - 0.5) * game.staticWorld.blockWidth) {
-        this.y = oldy;
+    if (this.y < oldY && i1 > 0 && game.world.walls[i1 - 1][j1] > 0 && this.y - this.width / 2  <= (i1 - 0.5) * game.blockWidth) {
+        this.y = oldY;
     }
-    if (this.x > oldx && j1 < game.staticWorld.width - 1 && game.staticWorld.walls[i1][j1 + 1] == 1 && this.x + this.width / 2 >= (j1 + 0.5) * game.staticWorld.blockWidth) {
-        this.x = oldx;
+    if (this.x > oldX && j1 < game.width - 1 && game.world.walls[i1][j1 + 1] > 0 && this.x + this.width / 2 >= (j1 + 0.5) * game.blockWidth) {
+        this.x = oldX;
     }
-    if (this.x < oldx && j1 > 0 && game.staticWorld.walls[i1][j1 - 1] == 1 && this.x - this.width / 2  <= (j1 - 0.5) * game.staticWorld.blockWidth) {
-        this.x = oldx;
+    if (this.x < oldX && j1 > 0 && game.world.walls[i1][j1 - 1] > 0 && this.x - this.width / 2  <= (j1 - 0.5) * game.blockWidth) {
+        this.x = oldX;
     }
-    if ((this.x >= oldx && this.y > oldy || this.x > oldx && this.y >= oldy) &&
-        i1 < game.staticWorld.height - 1 && j1 < game.staticWorld.width - 1 && game.staticWorld.walls[i1 + 1][j1 + 1] == 1) {
-        tempx = this.x - (j1 + 0.5) * game.staticWorld.blockWidth;
-        tempy = this.y - (i1 + 0.5) * game.staticWorld.blockWidth;
-        if (tempx * tempx + tempy * tempy <= this.width * this.width / 4) {
-            if (this.x > oldx) {
-                this.x = oldx + game.staticWorld.step / 2;
-                this.y = oldy - game.staticWorld.step / 2;
+    if ((this.x >= oldX && this.y > oldY || this.x > oldX && this.y >= oldY) &&
+        i1 < game.height - 1 && j1 < game.width - 1 && game.world.walls[i1 + 1][j1 + 1] > 0) {
+        tempX = this.x - (j1 + 0.5) * game.blockWidth;
+        tempY = this.y - (i1 + 0.5) * game.blockWidth;
+        if (tempX * tempX + tempY * tempY <= this.width * this.width / 4) {
+            if (this.x > oldX) {
+                this.x = oldX + game.step / 2;
+                this.y = oldY - game.step / 2;
             } else {
-                this.x = oldx - game.staticWorld.step / 2;
-                this.y = oldy + game.staticWorld.step / 2;
+                this.x = oldX - game.step / 2;
+                this.y = oldY + game.step / 2;
             }
         }
     }
-    if ((this.x >= oldx && this.y < oldy || this.x > oldx && this.y <= oldy) &&
-        i1 > 0 && j1 < game.staticWorld.width - 1 && game.staticWorld.walls[i1 - 1][j1 + 1] == 1) {
-        tempx = this.x - (j1 + 0.5) * game.staticWorld.blockWidth;
-        tempy = this.y - (i1 - 0.5) * game.staticWorld.blockWidth;
-        if (tempx * tempx + tempy * tempy <= this.width * this.width / 4) {
-            if (this.x > oldx) {
-                this.x = oldx + game.staticWorld.step / 2;
-                this.y = oldy + game.staticWorld.step / 2;
+    if ((this.x >= oldX && this.y < oldY || this.x > oldX && this.y <= oldY) &&
+        i1 > 0 && j1 < game.width - 1 && game.world.walls[i1 - 1][j1 + 1] > 0) {
+        tempX = this.x - (j1 + 0.5) * game.blockWidth;
+        tempY = this.y - (i1 - 0.5) * game.blockWidth;
+        if (tempX * tempX + tempY * tempY <= this.width * this.width / 4) {
+            if (this.x > oldX) {
+                this.x = oldX + game.step / 2;
+                this.y = oldY + game.step / 2;
             } else {
-                this.x = oldx - game.staticWorld.step / 2;
-                this.y = oldy - game.staticWorld.step / 2;
+                this.x = oldX - game.step / 2;
+                this.y = oldY - game.step / 2;
             }
         }
     }
-    if ((this.x <= oldx && this.y > oldy || this.x < oldx && this.y >= oldy) &&
-        i1 < game.staticWorld.height - 1 && j1 > 0 && game.staticWorld.walls[i1 + 1][j1 - 1] == 1) {
-        tempx = this.x - (j1 - 0.5) * game.staticWorld.blockWidth;
-        tempy = this.y - (i1 + 0.5) * game.staticWorld.blockWidth;
-        if (tempx * tempx + tempy * tempy <= this.width * this.width / 4) {
-            if (this.x > oldx) {
-                this.x = oldx - game.staticWorld.step / 2;
-                this.y = oldy - game.staticWorld.step / 2;
+    if ((this.x <= oldX && this.y > oldY || this.x < oldX && this.y >= oldY) &&
+        i1 < game.height - 1 && j1 > 0 && game.world.walls[i1 + 1][j1 - 1] > 0) {
+        tempX = this.x - (j1 - 0.5) * game.blockWidth;
+        tempY = this.y - (i1 + 0.5) * game.blockWidth;
+        if (tempX * tempX + tempY * tempY <= this.width * this.width / 4) {
+            if (this.x > oldX) {
+                this.x = oldX - game.step / 2;
+                this.y = oldY - game.step / 2;
             } else {
-                this.x = oldx + game.staticWorld.step / 2;
-                this.y = oldy + game.staticWorld.step / 2;
+                this.x = oldX + game.step / 2;
+                this.y = oldY + game.step / 2;
             }
         }
     }
-    if ((this.x <= oldx && this.y < oldy || this.x > oldx && this.y <= oldy) &&
-        i1 > 0 && j1 > 0 && game.staticWorld.walls[i1 - 1][j1 - 1] == 1) {
-        tempx = this.x - (j1 - 0.5) * game.staticWorld.blockWidth;
-        tempy = this.y - (i1 - 0.5) * game.staticWorld.blockWidth;
-        if (tempx * tempx + tempy * tempy <= this.width * this.width / 4) {
-            if (this.x > oldx) {
-                this.x = oldx - game.staticWorld.step / 2;
-                this.y = oldy + game.staticWorld.step / 2;
+    if ((this.x <= oldX && this.y < oldY || this.x > oldX && this.y <= oldY) &&
+        i1 > 0 && j1 > 0 && game.world.walls[i1 - 1][j1 - 1] > 0) {
+        tempX = this.x - (j1 - 0.5) * game.blockWidth;
+        tempY = this.y - (i1 - 0.5) * game.blockWidth;
+        if (tempX * tempX + tempY * tempY <= this.width * this.width / 4) {
+            if (this.x > oldX) {
+                this.x = oldX - game.step / 2;
+                this.y = oldY + game.step / 2;
             } else {
-                this.x = oldx + game.staticWorld.step / 2;
-                this.y = oldy - game.staticWorld.step / 2;
+                this.x = oldX + game.step / 2;
+                this.y = oldY - game.step / 2;
             }
         }
     }
-//    if (Math.floor( (this.z + this.width) / game.staticWorld.blockWidth) < i2 && game.staticWorld.walls[i2 - 1][j2] == 1) {
-//     this.z = oldz;
-//    }
-//
-//    if (Math.floor( (this.z - this.width) / game.staticWorld.blockWidth) > i2 && game.staticWorld.walls[i2 + 1][j2] == 1) {
-//     this.z = oldz;
-//    }
-//
-//    if (Math.floor( (this.x + this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 + 1] == 1) {
-//     this.x = oldx;
-//    }
-//
-//    if (Math.floor( (this.x - this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 - 1] == 1) {
-//     this.x = oldx;
-//    }
-
-
 };
 
 if (typeof module != "undefined") {
