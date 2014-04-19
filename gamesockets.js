@@ -40,6 +40,10 @@ module.exports = function(app, server, session_store) {
         socket.on('keys refresh', function (data) {
             game.player.moveByKeys(data, game);
             socket.emit('update world', game.world);
+
+            session_store.get(socket.handshake.sessionID, function(err, data) {
+                console.log(data.roomNumber)
+            });
         });
     });
 }

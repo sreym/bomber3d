@@ -16,6 +16,7 @@
         "connect-flash": "*",
         "socket.io": "*",
         "cookie" : "*",
-        "connect" : "*"
+        "connect" : "*",
+        "orm-timestamps" : "*"
     }
 }

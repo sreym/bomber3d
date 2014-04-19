@@ -1,7 +1,25 @@
 include includes/head.jade
     // Custom styles for this template
-    link(href="/css/login.css",rel="stylesheet")
     title Bomberman3D
 body
     #container
-        script(src="/socket.io/socket.io.js")
+        div.jumbotron
+            h1 Игровые комнаты
+            p Пользователь: #{user.username}
+            form.form-horizontal(role="form", method="post")
+                div.form-group
+                    label(for="roomName", class="col-sm-2 control-label") Имя комнаты
+                    div.col-sm-10
+                        input.form-control(type="text", id="roomName", placeholder="Введите имя комнаты", name="roomName")
+                div.form-group
+                    div(class="col-sm-offset-2 col-sm-10")
+                        button(type="submit", class="btn btn-default", class="col-sm-2") Создать
+        ul
+            each room in rooms
+                li
+                    a(href="/room/"+room.id)= room.name
+                    |&nbsp;(#{room.created_at.getHours()}:#{room.created_at.getMinutes()})
+
+
+
+

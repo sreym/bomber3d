@@ -62,9 +62,53 @@ app.post('/login', passport.authenticate('local', {
 }));
 
 app.get('/', function(req, res) {
+    console.log(req.user)
     if (req.user) {
-        //res.render('index');
-        res.redirect('/game/1');
+        req.models.Room.find({}, "created_at", function(err, rooms) {
+            res.render('index', {rooms: rooms, user: req.user});
+        });
+    } else {
+        res.render('login');
+    }
+});
+
+var isRoomNameCorrect = function(models, roomName, thenDone, elseDone) {
+    if (roomName && roomName.trim && roomName.trim() != "") {
+        models.Room.find({name : roomName}, function(err, rooms) {
+            if (err) {
+                console.error(err);
+                elseDone();
+            } else {
+                if (rooms.length == 0) {
+                    thenDone();
+                } else {
+                    elseDone();
+                }
+            }
+        });
+    } else {
+        elseDone();
+    }
+};
+
+app.post('/', function(req, res) {
+    if (req.user) {
+        isRoomNameCorrect(req.models, req.body.roomName, function() {
+            req.models.Room.create([{
+                name: req.body.roomName
+            }], function(err, items) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    res.redirect('/room/' + items[0].id);
+                }
+            });
+        }, function() {
+            console.log("Wrong room name: " + req.body.roomName);
+            req.models.Room.find({}, ["created_at","Z"], function(err, rooms) {
+                res.render('index', {rooms: rooms, user: req.user});
+            });
+        });
     } else {
         res.render('login');
     }
@@ -103,8 +147,9 @@ app.post('/register', function(req,res) {
     }
 });
 
-app.get('/game/:id', function(req,res) {
-    res.render('game', {room: req.params.id})
+app.get('/room/:id', function(req,res) {
+    req.session.roomNumber = req.params.id;
+    res.render('room', {room: req.params.id})
 });
 
 require('./gamesockets.js')(app, server, session_store);

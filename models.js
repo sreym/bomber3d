@@ -1,12 +1,22 @@
-var LocalStrategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy
+    , modts = require('orm-timestamps')
 
 module.exports = function(passport) {
     return function(db, models, next) {
         db.settings.set('instance.cache', false);
 
+        db.use(modts, {
+            createdProperty: 'created_at',
+            modifiedProperty: 'modified_at',
+            dbtype: { type: 'date', time: true },
+            now: function() { return new Date(); },
+            persist: true
+        });
+
         module.exports.fillModels(db, models);
 
         models.User.sync();
+        models.Room.sync();
 
 
         if (passport) {
@@ -52,5 +62,12 @@ module.exports.fillModels = function(db, models) {
                 return this.password == password;
             }
         }
+    });
+
+    models.Room = db.define('room', {
+        name: String,
+        creationTime: Date
+    }, {
+        timestamp: true
     });
 }
