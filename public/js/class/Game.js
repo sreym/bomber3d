@@ -51,9 +51,9 @@ Game.World.prototype.update = function(data) {
 }
 
 Game.Player = function() {
-    this.x = 0.0;
+    this.x = 1.0;
     this.y = 0.0;
-    this.z = 0.0;
+    this.z = 1.0;
     this.width = 0.5;
     this.height = 1.0;
 }
@@ -68,8 +68,8 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
     var oldx = this.x;
     var oldz = this.z;
 
-    var i1 = Math.floor(this.z);
-    var j1 = Math.floor(this.x);
+    var i1 = Math.floor(this.z / game.staticWorld.blockWidth);
+    var j1 = Math.floor(this.x / game.staticWorld.blockWidth);
 
     if (keys.left) {
         this.x -= 0.1;
@@ -84,12 +84,27 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
         this.z += 0.1;
     }
 
-    var i2 = Math.floor(this.z);
-    var j2 = Math.floor(this.x);
+/*
+    var i2 = Math.floor(this.z / game.staticWorld.blockWidth);
+    var j2 = Math.floor(this.x / game.staticWorld.blockWidth);
 
-    if ( game.staticWorld.walls[i2][j2] == 1) {
-
+    if (Math.floor( (this.z + this.width) / game.staticWorld.blockWidth) < i2 && game.staticWorld.walls[i2 - 1][j2] == 1) {
+     this.z = oldz;
     }
+
+    if (Math.floor( (this.z - this.width) / game.staticWorld.blockWidth) > i2 && game.staticWorld.walls[i2 + 1][j2] == 1) {
+     this.z = oldz;
+    }
+
+    if (Math.floor( (this.x + this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 + 1] == 1) {
+     this.x = oldx;
+    }
+
+    if (Math.floor( (this.x - this.width) / game.staticWorld.blockWidth) < j2 && game.staticWorld.walls[i2][j2 - 1] == 1) {
+     this.x = oldx;
+    }
+*/
+
 }
 
 if (typeof module != "undefined") {
