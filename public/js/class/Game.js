@@ -1,4 +1,5 @@
 Game = function() {
+//    randomize();
     this.width = 15;
     this.height = 13;
     this.blockWidth = 1.0;
@@ -22,11 +23,28 @@ Game.World = function(width, height) {
             if (j == 0 || j == width - 1 || i == 0 || i == height - 1) {
                 A.push(1);
             } else {
-                A.push(i % 2 == 0 && j % 2 == 0 ? 1 : 0);
+                if (i % 2 == 0 && j % 2 == 0) A.push(1);
+                else {
+                    if (Math.random() < 0.3) A.push(2);
+                    else
+                    A.push(0);
+                }
             }
         }
         this.walls.push(A);
     }
+    A[1][1] = 0;
+    A[1][2] = 0;
+    A[2][1] = 0;
+    A[1][width - 1] = 0;
+    A[1][width - 2] = 0;
+    A[2][width - 1] = 0;
+    A[height - 1][1] = 0;
+    A[height - 2][1] = 0;
+    A[height - 1][2] = 0;
+    A[height - 1][width - 1] = 0;
+    A[height - 2][width - 1] = 0;
+    A[height - 1][width - 2] = 0;
     this.bombs = [];
 };
 
@@ -40,6 +58,11 @@ Game.World.prototype.update = function(data) {
     for(var i = 0; i < this.players.length; i++) {
         this.players[i].update(data.players[i]);
     }
+
+    this.bombs = [];
+    for (var i = 0; i < data.bombs.length; i++) {
+        this.bombs.push(data.bombs[i]);
+    }
 };
 
 Game.Player = function() {
@@ -48,6 +71,11 @@ Game.Player = function() {
     this.z = 0.0;
     this.width = 0.6;
     this.height = 1.0;
+};
+
+Game.Bomb = function(x, y) {
+    this.x = x;
+    this.y = y;
 };
 
 Game.Player.prototype.update = function(data) {
@@ -64,6 +92,12 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
     var i1 = Math.floor((this.y + game.blockWidth / 2)/ game.blockWidth);
     var j1 = Math.floor((this.x + game.blockWidth / 2) / game.blockWidth);
     console.log(i1 + " " + j1);
+
+    if (keys.space) {
+        var newBomb = new Game.Bomb(j1, i1);
+        game.world.bombs.push(newBomb);
+    }
+
     if (keys.left) {
         this.x -= game.step;
     }
