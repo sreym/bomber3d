@@ -55,7 +55,7 @@ Game.Player = function() {
     this.x = 1.0;
     this.y = 1.0;
     this.z = 0.0;
-    this.width = 0.8;
+    this.width = 0.6;
     this.height = 1.0;
 };
 
@@ -85,17 +85,23 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
         this.y -= game.staticWorld.step;
     }
 
-
 //    var i2 = Math.floor(this.y / game.staticWorld.blockWidth);
 //    var j2 = Math.floor(this.x / game.staticWorld.blockWidth);
-    console.log(this.y + this.width / 2);
-    console.log((i1 + 0.5) * game.staticWorld.blockWidth);
-    if (i1 < game.staticWorld.height - 1 && game.staticWorld.walls[i1 + 1][j1] == 1 && this.y + this.width / 2>= (i1 + 0.5) * game.staticWorld.blockWidth) {
+//    console.log((this.y + this.width / 2) + "<=" + ((i1 + 0.5) * game.staticWorld.blockWidth));
+//    console.log((this.y - this.width / 2) + ">=" + ((i1 - 0.5) * game.staticWorld.blockWidth));
+    if (this.y > oldy && i1 < game.staticWorld.height - 1 && game.staticWorld.walls[i1 + 1][j1] == 1 && this.y + this.width / 2 >= (i1 + 0.5) * game.staticWorld.blockWidth) {
         this.y = oldy;
     }
-//    if (i1 > 0 && game.staticWorld.walls[i1 - 1][j1] == 1 && this.y - this.width <= (i1 + 0.5) * game.staticWorld.blockWidth) {
-//        this.y = oldy;
-//    }
+    if (this.y < oldy && i1 > 0 && game.staticWorld.walls[i1 - 1][j1] == 1 && this.y - this.width / 2  <= (i1 - 0.5) * game.staticWorld.blockWidth) {
+        this.y = oldy;
+    }
+    if (this.x > oldx && j1 < game.staticWorld.width - 1 && game.staticWorld.walls[i1][j1 + 1] == 1 && this.x + this.width / 2 >= (j1 + 0.5) * game.staticWorld.blockWidth) {
+        this.x = oldx;
+    }
+    if (this.x < oldx && j1 > 0 && game.staticWorld.walls[i1][j1 - 1] == 1 && this.x - this.width / 2  <= (j1 - 0.5) * game.staticWorld.blockWidth) {
+        this.x = oldx;
+    }
+
 //    if (Math.floor( (this.z + this.width) / game.staticWorld.blockWidth) < i2 && game.staticWorld.walls[i2 - 1][j2] == 1) {
 //     this.z = oldz;
 //    }
