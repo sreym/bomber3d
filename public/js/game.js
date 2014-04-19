@@ -27,7 +27,7 @@ $(document).ready(function() {
         staticWallMaterial = materials[5];
 
         wallMaterial = materials[3];
-        bombMaterial = materials[5];
+        bombMaterial = materials[2];
         bombGeometry = new THREE.SphereGeometry(game.blockWidth / 3, 32, 32);
         for (i = 0; i < game.height; i++) {
             for (j = 0; j < game.width; j++) {
