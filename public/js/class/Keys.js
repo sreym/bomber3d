@@ -7,6 +7,8 @@ Keys = function() {
     this.right = false;
     this.down = false;
 
+    this.lastKey = null;
+
     document.addEventListener('keydown', function(e) {
         this_.changeIfKeyStatus(e.keyCode, true);
     });
@@ -16,10 +18,10 @@ Keys = function() {
 };
 Keys.prototype.changeIfKeyStatus = function(keyCode, status) {
     switch(keyCode) {
-        case 32: this.space = status; break;
-        case 37: this.left = status; break;
-        case 38: this.up = status; break;
-        case 39: this.right = status; break;
-        case 40: this.down = status; break;
+        case 32: this.space = status; this.lastKey = 'space'; break;
+        case 37: this.left = status; this.lastKey = 'left'; break;
+        case 38: this.up = status; this.lastKey = 'up'; break;
+        case 39: this.right = status; this.lastKey = 'right'; break;
+        case 40: this.down = status; this.lastKey = 'down'; break;
     }
 }
