@@ -27,15 +27,17 @@ module.exports = function(app, server, session_store) {
     });
 
     io.sockets.on('connection', function (socket) {
+//        session_store.get(socket.handshake.sessionID, function (err, data) {
+//            models.User.get(data.passport.user, function (err, user) {
+//                console.log(user);
+//            });
+//        });
+
         var game = new Game();
 
-        socket.emit('init game', game);
-
-        /*session_store.get(socket.handshake.sessionID, function(err, data) {
-            models.User.get(data.passport.user, function(err, user) {
-                console.log(user);
-            });
-        });*/
+        setTimeout(function() {
+            socket.emit('init game', game);
+        }, 500);
 
         socket.on('keys refresh', function (data) {
             game.player.moveByKeys(data, game);
