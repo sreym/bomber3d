@@ -46,7 +46,7 @@ $(document).ready(function() {
                     var wall = new WallEmpty();
                     switch (game.world.walls[i][j]) {
                         case 1:
-                            wall = new THREE.Mesh(geometries.wall, materials.staticWall);
+                            wall = new THREE.Mesh(geometries.staticWall, materials.staticWall);
                             break;
                         case 2:
                             wall = new THREE.Mesh(geometries.wall, materials.wall);

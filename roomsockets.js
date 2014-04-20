@@ -7,6 +7,7 @@ var Game = require('./public/js/class/Game.js');
 
 module.exports = function(app, server, session_store) {
     var io = socket_io.listen(server);
+    io.set('log level', 1);
     var models = {};
 
     io.set('authorization', function (handshakeData, accept) {
@@ -43,9 +44,9 @@ module.exports = function(app, server, session_store) {
             game.player.moveByKeys(data, game);
             socket.emit('update world', game.world);
 
-            session_store.get(socket.handshake.sessionID, function(err, data) {
+            /*session_store.get(socket.handshake.sessionID, function(err, data) {
                 console.log(data.roomNumber)
-            });
+            });*/
         });
     });
 }

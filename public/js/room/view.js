@@ -1,6 +1,16 @@
 (function() {
     var loader = new THREE.JSONLoader(true);
 
+    function defferedLoad(url) {
+        var d = $.Deferred();
+
+        loader.load(url, function(geometry, material) {
+            d.resolve(geometry, material);
+        });
+
+        return d.promise();
+    }
+
     Game.prototype.initLights = function() {
         var d = $.Deferred();
 
@@ -32,20 +42,26 @@
         floorGeometry.faces.push(new THREE.Face3(0, 2, 3));
         floorGeometry.computeBoundingSphere();
 
-        loader.load('/models/character_base.js', function(playerGeometry, playerMaterial) {
+        $.when(
+            defferedLoad('/models/character_base.js'),
+            defferedLoad('/models/wall_static.js'),
+            defferedLoad('/models/wall.js'),
+            defferedLoad('/models/bomb.js')
+        ).done(function(character, wallStatic, wall, bomb) {
             d.resolve({
-                wall: new THREE.CubeGeometry(this_.blockWidth, this_.blockHeight, this_.blockWidth),
-                bomb: new THREE.SphereGeometry(this_.blockWidth / 3, 32, 32),
+                wall: wall[0],
+                staticWall: wallStatic[0],
+                bomb: bomb[0],
                 floor: floorGeometry,
-                player: playerGeometry
+                player: character[0]
             }, {
-                staticWall: new THREE.MeshLambertMaterial({ color: 0xe2ce6e, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
-                wall: new THREE.MeshLambertMaterial({ color: 0xaff0ed, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
-                bomb: new THREE.MeshLambertMaterial({ color: 0x473113, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
+                staticWall: new THREE.MeshFaceMaterial(wallStatic[1]),
+                wall: new THREE.MeshFaceMaterial(wall[1]),
+                bomb: new THREE.MeshFaceMaterial(bomb[1]),
                 floor: new THREE.MeshNormalMaterial(),
                 //floor: new THREE.MeshLambertMaterial( { color: 0x473113, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading } ),
                 //player: new THREE.MeshLambertMaterial({ color: 0x55ff55, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.SmoothShading })
-                player: new THREE.MeshFaceMaterial(playerMaterial)
+                player: new THREE.MeshFaceMaterial(character[1])
             });
         });
 
