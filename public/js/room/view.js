@@ -32,19 +32,20 @@
         floorGeometry.faces.push(new THREE.Face3(0, 2, 3));
         floorGeometry.computeBoundingSphere();
 
-        loader.load('/models/character_base.js', function(geometry) {
+        loader.load('/models/character_base.js', function(playerGeometry, playerMaterial) {
             d.resolve({
                 wall: new THREE.CubeGeometry(this_.blockWidth, this_.blockHeight, this_.blockWidth),
                 bomb: new THREE.SphereGeometry(this_.blockWidth / 3, 32, 32),
                 floor: floorGeometry,
-                player: geometry
+                player: playerGeometry
             }, {
                 staticWall: new THREE.MeshLambertMaterial({ color: 0xe2ce6e, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
                 wall: new THREE.MeshLambertMaterial({ color: 0xaff0ed, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
                 bomb: new THREE.MeshLambertMaterial({ color: 0x473113, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading }),
                 floor: new THREE.MeshNormalMaterial(),
                 //floor: new THREE.MeshLambertMaterial( { color: 0x473113, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading } ),
-                player: new THREE.MeshLambertMaterial({ color: 0x55ff55, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.SmoothShading })
+                //player: new THREE.MeshLambertMaterial({ color: 0x55ff55, ambient: 0x111111, specular: 0xffffff, shininess: 30, shading: THREE.SmoothShading })
+                player: new THREE.MeshFaceMaterial(playerMaterial)
             });
         });
 

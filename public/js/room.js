@@ -108,7 +108,7 @@ $(document).ready(function() {
             // update player's mesh
             meshes.player.position.x = game.world.players[0].x * game.blockWidth;
             meshes.player.position.z = -game.world.players[0].y * game.blockWidth;
-            switch(keys.lastKey) {
+            switch(keys.lastKeyDown) {
                 case 'left': meshes.player.rotation.y = -Math.PI / 2; break;
                 case 'right': meshes.player.rotation.y = Math.PI / 2; break;
                 case 'up': meshes.player.rotation.y = Math.PI; break;
