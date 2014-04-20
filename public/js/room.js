@@ -27,7 +27,9 @@ $(document).ready(function() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    $.when(game.initGeometries(), game.initMaterials(), game.initLights()).done(function(geometries, materials, lights) {
+    $.when(game.initGeometriesAndMaterials(), game.initLights()).done(function(geometriesAndMaterials, lights) {
+        var geometries = geometriesAndMaterials[0];
+        var materials = geometriesAndMaterials[1];
         var meshes = game.getMeshes(geometries, materials);
 
         socket.on('init game', function (data) {
