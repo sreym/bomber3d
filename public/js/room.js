@@ -40,9 +40,9 @@ $(document).ready(function() {
             game.update(data);
 
             //init walls
-            for (var i = 0; i < game.height; i++) {
+            for (var i = 0; i < game.width; i++) {
                 meshes.walls.push([]);
-                for (var j = 0; j < game.width; j++) {
+                for (var j = 0; j < game.height; j++) {
                     var wall = new WallEmpty();
                     switch (game.world.walls[i][j]) {
                         case 1:
@@ -55,8 +55,8 @@ $(document).ready(function() {
                     meshes.walls[i].push(wall);
                     if (wall.wallType !== 0) {
                         wall.wallType = game.world.walls[i][j];
-                        wall.position.x = j * game.blockWidth;
-                        wall.position.z = -i * game.blockWidth;
+                        wall.position.x = i * game.blockWidth;
+                        wall.position.z = -j * game.blockWidth;
                         wall.position.y = game.blockHeight / 2 - 0.5;
                         scene.add(wall);
                     }
@@ -78,8 +78,8 @@ $(document).ready(function() {
             game.world.update(data);
 
             // update walls' meshes
-            for (var i = 0; i < game.height; i++) {
-                for (var j = 0; j < game.width; j++) {
+            for (var i = 0; i < game.width; i++) {
+                for (var j = 0; j < game.height; j++) {
                     if(game.world.walls[i][j] !== meshes.walls[i][j].wallType) {
                         switch(game.world.walls[i][j]) {
                             case 0:
