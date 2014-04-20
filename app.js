@@ -149,10 +149,13 @@ app.post('/register', function(req,res) {
 
 app.get('/room/:id', function(req,res) {
     req.session.roomNumber = req.params.id;
-    res.render('room', {room: req.params.id})
+    req.models.Room.get(req.params.id, function(err, room) {
+        res.render('room', {room: room})
+    });
+
 });
 
-require('./gamesockets.js')(app, server, session_store);
+require('./roomsockets.js')(app, server, session_store);
 
 server.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

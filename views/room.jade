@@ -1,11 +1,12 @@
 include includes/head.jade
     // Custom styles for this template
     link(href="/css/game.css",rel="stylesheet")
-    title Room #{room} - Bomberman3D
+    title #{room.name} - Bomberman3D
     script(src="/socket.io/socket.io.js")
     script(src="/js/three.min.js")
     script(src="/js/class/Keys.js")
     script(src="/js/class/Game.js")
-    script(src="/js/game.js")
+    script(src="/js/room/view.js")
+    script(src="/js/room.js")
 body
     #container
