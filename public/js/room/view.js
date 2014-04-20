@@ -72,7 +72,7 @@
         return {
             walls: [],
             bombs: [],
-            player: new THREE.Mesh(geometries.player, materials.player),
+            players: [],
             floor: new THREE.Mesh(geometries.floor, materials.floor)
         };
     };

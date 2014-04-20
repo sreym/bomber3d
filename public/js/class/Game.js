@@ -7,12 +7,14 @@ Game = function() {
     this.bombInterval = 8000;
     this.step = 0.1;
     this.world = new Game.World(this.width, this.height);
-    this.player = new Game.Player();
-    this.world.players.push(this.player);
 };
 
 Game.prototype.update = function(data) {
     this.world.update(data.world);
+};
+
+Game.prototype.addPlayer = function(name) {
+    this.world.players.push(new Game.Player(name));
 };
 
 Game.World = function(width, height) {
@@ -67,7 +69,10 @@ Game.World.prototype.update = function(data) {
             this.walls[i][j] = data.walls[i][j];
         }
     }
-    
+
+    while (this.players.length < data.players.length) {
+        this.players.push(new Game.Player(""));
+    }
     for(var i = 0; i < this.players.length; i++) {
         this.players[i].update(data.players[i]);
     }
@@ -78,13 +83,15 @@ Game.World.prototype.update = function(data) {
     }
 };
 
-Game.Player = function() {
+Game.Player = function(name) {
     this.x = 1.0;
     this.y = 1.0;
     this.z = 0.0;
     this.width = 0.6;
     this.height = 1.0;
     this.maxBombs = 1;
+    this.name = name;
+    this.rotation = {x: 0, y: 0, z: 0};
 };
 
 Game.Bomb = function(x, y, game) {
@@ -144,6 +151,11 @@ Game.Player.prototype.update = function(data) {
     this.x = data.x;
     this.y = data.y;
     this.z = data.z;
+    this.name = data.name;
+    this.width = 0.6;
+    this.height = 1.0;
+    this.maxBombs = 1;
+    this.rotation = data.rotation;
 };
 
 Game.Player.prototype.moveByKeys = function(keys, game) {
@@ -161,15 +173,19 @@ Game.Player.prototype.moveByKeys = function(keys, game) {
 
     if (keys.left) {
         this.x -= game.step;
+        this.rotation.y = -Math.PI / 2;
     }
     if (keys.right) {
         this.x += game.step;
+        this.rotation.y = Math.PI / 2;
     }
     if (keys.up) {
         this.y += game.step;
+        this.rotation.y = Math.PI;
     }
     if (keys.down) {
         this.y -= game.step;
+        this.rotation.y = 0.0;
     }
 
 //    console.log((this.y + this.width / 2) + "<=" + ((i1 + 0.5) * game.staticWorld.blockWidth));

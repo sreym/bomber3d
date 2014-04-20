@@ -66,8 +66,10 @@ module.exports.fillModels = function(db, models) {
 
     models.Room = db.define('room', {
         name: String,
-        creationTime: Date
+        isOpened: Boolean
     }, {
         timestamp: true
     });
+
+    models.Room.hasMany('players', models.User);
 }

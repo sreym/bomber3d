@@ -20,6 +20,11 @@ body
                     a(href="/room/"+room.id)= room.name
                     |&nbsp;(#{room.created_at.getHours()}:#{room.created_at.getMinutes()})
 
+        if error
+            ul(class="bg-danger")
+                each msg in error
+                    li= msg
+
 
 
 

@@ -95,18 +95,19 @@ app.post('/', function(req, res) {
     if (req.user) {
         isRoomNameCorrect(req.models, req.body.roomName, function() {
             req.models.Room.create([{
-                name: req.body.roomName
+                name: req.body.roomName,
+                isOpened: true
             }], function(err, items) {
                 if (err) {
                     console.error(err);
                 } else {
-                    res.redirect('/room/' + items[0].id);
+                    res.redirect('/');
                 }
             });
         }, function() {
             console.log("Wrong room name: " + req.body.roomName);
             req.models.Room.find({}, ["created_at","Z"], function(err, rooms) {
-                res.render('index', {rooms: rooms, user: req.user});
+                res.render('index', {rooms: rooms, user: req.user, error: req.flash('error')});
             });
         });
     } else {
@@ -150,7 +151,18 @@ app.post('/register', function(req,res) {
 app.get('/room/:id', function(req,res) {
     req.session.roomNumber = req.params.id;
     req.models.Room.get(req.params.id, function(err, room) {
-        res.render('room', {room: room})
+        room.getPlayers(function(err, players) {
+            var userIsInRoom = (players.filter(function(player) {return player.id == req.user.id;}).length != 0);
+            if (players.length >= 4 && !userIsInRoom) {
+                req.flash('error', 'Room is full.');
+                res.redirect("/");
+            } else {
+                if (!userIsInRoom) {
+                    room.addPlayers([req.user], function(err) {if (err) console.error(err);});
+                }
+                res.render('room', {room: room})
+            }
+        });
     });
 
 });

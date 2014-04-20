@@ -31,11 +31,10 @@ $(document).ready(function() {
         var geometries = geometriesAndMaterials[0];
         var materials = geometriesAndMaterials[1];
         var meshes = game.getMeshes(geometries, materials);
+        var playerName, playerNum;
 
         socket.on('init game', function (data) {
-            setInterval( function() {
-                socket.emit('keys refresh', keys);
-            }, 100);
+            playerName = data.playerName;
 
             game.update(data);
 
@@ -63,13 +62,29 @@ $(document).ready(function() {
                 }
             }
 
-            meshes.player.position.x = game.world.players[0].x * game.blockWidth;
-            meshes.player.position.y = 0;
-            meshes.player.position.z = -game.world.players[0].y * game.blockWidth;
+            // init players' meshes
+            game.world.players.forEach(function(player, i) {
+                meshes.players.push(new THREE.Mesh(geometries.player, materials.player));
+                meshes.players[i].position.x = game.world.players[i].x * game.blockWidth;
+                meshes.players[i].position.y = 0;
+                meshes.players[i].position.z = -game.world.players[i].y * game.blockWidth;
+                scene.add(meshes.players[i]);
 
-            scene.add(meshes.player);
+                if (player.name == playerName) {
+                    meshes.player = meshes.players[i];
+                    playerNum = i;
+                }
+            });
+
             scene.add(meshes.floor);
             for(var i = 0; i < lights.length; i++) scene.add(lights[i]);
+
+            setInterval( function() {
+                socket.emit('keys refresh', {
+                    keys: keys,
+                    playerNum: playerNum
+                });
+            }, 100);
 
             render();
         });
@@ -105,15 +120,18 @@ $(document).ready(function() {
                 scene.add(newBomb);
             }
 
-            // update player's mesh
-            meshes.player.position.x = game.world.players[0].x * game.blockWidth;
-            meshes.player.position.z = -game.world.players[0].y * game.blockWidth;
-            switch(keys.lastKeyDown) {
-                case 'left': meshes.player.rotation.y = -Math.PI / 2; break;
-                case 'right': meshes.player.rotation.y = Math.PI / 2; break;
-                case 'up': meshes.player.rotation.y = Math.PI; break;
-                case 'down': meshes.player.rotation.y = 0.0; break;
+            // update players' meshes
+            while (game.world.players.length > meshes.players.length) {
+                var newPlayer = new THREE.Mesh(geometries.player, materials.player);
+                meshes.players.push(newPlayer);
+                scene.add(newPlayer);
             }
+            game.world.players.forEach(function(player, i) {
+                meshes.players[i].position.x = game.world.players[i].x * game.blockWidth;
+                meshes.players[i].position.y = 0.0;
+                meshes.players[i].position.z = -game.world.players[i].y * game.blockWidth;
+                meshes.players[i].rotation.y = game.world.players[i].rotation.y;
+            });
         });
 
         camera.position.z = 3;
